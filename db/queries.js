@@ -1,5 +1,7 @@
 const cTable = require('console.table');
 const db = require('./connections');
+// const inquirer = require('inquirer');
+// const promptUser = require('../index.js');
 
 const viewEmployees = () => {
     const sql = `SELECT s1.id, s1.first_name, s1.last_name, roles.title AS title, departments.name AS department, roles.salary AS salary, CONCAT(s2.first_name, " ", s2.last_name) AS manager
@@ -12,6 +14,7 @@ const viewEmployees = () => {
         .then(([rows, fields]) => {
             const table = cTable.getTable(rows);
             console.log(table);
+            // promptUser();
         })
         .catch(err => console.log(err));
 
@@ -72,7 +75,25 @@ const addEmployee = (fName, lName,roleId, managerId) => {
             console.log(`${fName} ${lName} is added to the database!`);
         })
         .catch(err => console.log(err));
+};
+
+const updateEmployeeRole = (roleId,id ) =>{
+    const sql = "UPDATE employees SET role_id = ? WHERE id =?; ";
+    db.promise().query(sql, [roleId, id])
+        .then(() => {
+            console.log(`The role is updated in the database!`);
+        })
+        .catch(err => console.log(err));  
+};
+
+const selectRoles = () =>{
+    const sql = "SELECT title FROM roles;"
+    db.query(sql, (err, rows) =>{
+        console.log('roles', rows.title);
+        return rows;
+    })
 }
-module.exports = { viewEmployees, viewDepartments, viewRoles, addDepartment, addRole, addEmployee };
+
+module.exports = { viewEmployees, viewDepartments, viewRoles, addDepartment, addRole, addEmployee, updateEmployeeRole, selectRoles };
 
 

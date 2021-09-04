@@ -7,7 +7,7 @@ const db = mysql.createConnection(
         password: 'micky520',
         database: 'employees'
     },
-    console.log('Welcome to Eployee Tracker!')
+    console.log('Welcome to Employee Tracker!')
 );
 
 
