@@ -57,11 +57,9 @@ const promptAddEmployee = () => {
             type: 'list',
             name: 'role',
             message: "What is the employee's role ? (required)",
-            choices: selectRoles(),
+            choices: selectRoles()
         },
-
-    ])
-
+    ]);
 };
 
 const followUp = (data) => {
@@ -104,7 +102,6 @@ const followUp = (data) => {
 promptUser()
     .then(followUp)
 
-// selectRoles();
 
     // result => console.log(result));
     // module.exports = promptUser;

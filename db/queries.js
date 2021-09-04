@@ -68,31 +68,32 @@ const addRole = (title, salary, departmentId) => {
         .catch(err => console.log(err));
 };
 
-const addEmployee = (fName, lName,roleId, managerId) => {
+const addEmployee = (fName, lName, roleId, managerId) => {
     const sql = "INSERT INTO employees (first_name, last_name, role_id, manager_id ) VALUES (?, ?, ?, ?);";
-    db.promise().query(sql, [fName, lName,roleId, managerId])
+    db.promise().query(sql, [fName, lName, roleId, managerId])
         .then(() => {
             console.log(`${fName} ${lName} is added to the database!`);
         })
         .catch(err => console.log(err));
 };
 
-const updateEmployeeRole = (roleId,id ) =>{
+const updateEmployeeRole = (roleId, id) => {
     const sql = "UPDATE employees SET role_id = ? WHERE id =?; ";
     db.promise().query(sql, [roleId, id])
         .then(() => {
             console.log(`The role is updated in the database!`);
         })
-        .catch(err => console.log(err));  
+        .catch(err => console.log(err));
 };
 
-const selectRoles = () =>{
+const selectRoles = () => {
     const sql = "SELECT title FROM roles;"
-    db.query(sql, (err, rows) =>{
-        console.log('roles', rows.title);
-        return rows;
-    })
-}
+    db.query(sql, (err, rows) => {
+        const roles = [];
+        rows.forEach(element => roles.push(element.title));
+        return roles;
+    });
+};
 
 module.exports = { viewEmployees, viewDepartments, viewRoles, addDepartment, addRole, addEmployee, updateEmployeeRole, selectRoles };
 
