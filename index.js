@@ -27,7 +27,10 @@ const promptUser = () => {
 }
 
 
-const promptAddEmployee = () => {
+const promptAddEmployee = async () => {
+
+    const [roles] = await selectRoles();
+    console.log(roles);
     return inquirer.prompt([
         {
             type: 'input',
@@ -57,7 +60,7 @@ const promptAddEmployee = () => {
             type: 'list',
             name: 'role',
             message: "What is the employee's role ? (required)",
-            choices: selectRoles()
+            choices: roles.map(role => role.title)
         },
     ]);
 };
@@ -103,5 +106,5 @@ promptUser()
     .then(followUp)
 
 
-    // result => console.log(result));
-    // module.exports = promptUser;
+    // const [roles] =  selectRoles();
+    // console.log( roles.map(role => role.title));

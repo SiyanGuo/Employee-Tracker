@@ -87,12 +87,16 @@ const updateEmployeeRole = (roleId, id) => {
 };
 
 const selectRoles = () => {
-    const sql = "SELECT title FROM roles;"
-    db.query(sql, (err, rows) => {
-        const roles = [];
-        rows.forEach(element => roles.push(element.title));
-        return roles;
-    });
+    const sql = "SELECT id, title FROM roles;"
+
+    return db.promise().query(sql)
+    //     .then((rows) => {
+    //         console.log(rows);
+    //         const roles = [];
+    //         rows.forEach(element => roles.push(element.title));
+    //         return roles;
+    //     })
+
 };
 
 module.exports = { viewEmployees, viewDepartments, viewRoles, addDepartment, addRole, addEmployee, updateEmployeeRole, selectRoles };
