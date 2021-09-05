@@ -58,7 +58,7 @@ const addDepartment = (departmentName) => {
         .catch(err => console.log(err));
 };
 
-const addRole = ({ roleTitle, salary, department}) => {
+const addRole = ({ roleTitle, salary, department }) => {
     const sql = "SELECT id FROM departments WHERE name = ?;";
     const sql2 = "INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?);";
 
@@ -77,7 +77,7 @@ const addRole = ({ roleTitle, salary, department}) => {
         })
 };
 
-const addEmployee = ({ fName, lName, role, manager}) => {
+const addEmployee = ({ fName, lName, role, manager }) => {
     const sql = "SELECT id FROM roles WHERE title = ?;";
     const sql2 = "SELECT id FROM employees WHERE CONCAT(first_name, ' ', last_name) = ?;";
     const sql3 = "INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?);";
@@ -105,13 +105,21 @@ const addEmployee = ({ fName, lName, role, manager}) => {
         })
 };
 
-const updateEmployeeRole = ({ employeeName, roleName }) => {
-    const sql = "UPDATE employees SET role_id = ? WHERE id =?; ";
-    db.promise().query(sql, [roleName, employeeName])
-        .then(() => {
-            console.log(`The role is updated in the database!`);
+const updateEmployeeRole = ({ roleName, employeeName }) => {
+    const sql = "SELECT id FROM roles WHERE title = ?;"
+    const sql2 = "UPDATE employees SET role_id = ? WHERE CONCAT(first_name, ' ', last_name) =?; ";
+    let roleId;
+    db.promise().query(sql, roleName)
+        .then(([rows, fields]) => {
+            return roleId = rows[0].id;
         })
-        .catch(err => console.log(err));
+        .then(() => {
+            db.promise().query(sql2, [roleId, employeeName])
+            .then(() => {
+                console.log(`${employeeName}'s role is updated in the database!`);
+            })
+            .catch(err => console.log(err));
+        })
 };
 
 const selectRole = () => {
