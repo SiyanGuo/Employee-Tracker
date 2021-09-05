@@ -30,7 +30,7 @@ const viewEmployees = () => {
 };
 
 const viewDepartments = () => {
-    const sql = "SELECT * FROM departments;"
+    const sql = "SELECT * FROM departments ORDER BY id;"
     db.promise().query(sql)
         .then(([rows, fields]) => {
             const table = cTable.getTable(rows);
@@ -40,7 +40,7 @@ const viewDepartments = () => {
 };
 
 const viewRoles = () => {
-    const sql = "SELECT * FROM roles;"
+    const sql = "SELECT roles.id, roles.title, roles.salary, departments.name AS department FROM roles LEFT JOIN departments ON roles.department_id = departments.id;"
     db.promise().query(sql)
         .then(([rows, fields]) => {
             const table = cTable.getTable(rows);

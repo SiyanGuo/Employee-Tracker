@@ -27,7 +27,8 @@ const promptUser = () => {
                 return false;
             }
         }
-    })
+    });
+
 }
 
 const promptAddEmployee = async () => {
@@ -135,12 +136,14 @@ const promptAddRole = async () => {
             }
         ])
         .then(result =>
-            addRoles(result)
+            addRole(result)
         )
 };
 
 const promptUpdateRole = async () =>{
     const [roles] = await selectRole();
+    const [employees] = await selectManager();
+
     return inquirer
     .prompt([
         {
@@ -153,7 +156,7 @@ const promptUpdateRole = async () =>{
             type: 'list',
             name: 'roleName',
             message: "What role do you want to update to?",
-            choices: roles.map(role => role.name)
+            choices: roles.map(role => role.title)
 
         }
     ])
@@ -196,11 +199,11 @@ const followUp = (data) => {
     };
 };
 
-// promptUser()
-//     .then(followUp)
+promptUser()
+    .then(followUp)
 
 
 // addRole({roleTitle: "Buyer",salary: "20000", department: "Marketing"});
 // addEmployee({fName: "Jo", lName:"yo", role:"Lead Engineer", manager: "Kevin Misef" })
 
-updateEmployeeRole({roleName: "Accountant", employeeName: "Jason Doe"})
+// updateEmployeeRole({roleName: "Accountant", employeeName: "Jason Doe"})
