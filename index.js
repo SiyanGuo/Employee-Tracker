@@ -200,4 +200,5 @@ const followUp = (data) => {
 //     .then(followUp)
 
 
-addRole({roleTitle: "operation",salary: "1000", department: "Accounting"});
+// addRole({roleTitle: "Buyer",salary: "20000", department: "Marketing"});
+addEmployee({fName: "JIN", lName:"kim", role:"Lead Engineer", manager: "Kevin Misef" })

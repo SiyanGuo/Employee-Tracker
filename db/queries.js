@@ -58,32 +58,51 @@ const addDepartment = (departmentName) => {
         .catch(err => console.log(err));
 };
 
-const addRole = ({ roleTitle, salary, department }) => {
-    const sql = "SELECT id FROM departments WHERE name = ?";
-    const sql2 = "INSERT INTO roles (title, salary, department_id ) VALUES (?, ?, ?);";
+const addRole = ({ roleTitle, salary, department}) => {
+    const sql = "SELECT id FROM departments WHERE name = ?;";
+    const sql2 = "INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?);";
 
     let departmentId;
     db.promise().query(sql, department)
         .then(([rows, fields]) => {
             return departmentId = rows[0].id;
         })
-        .then((departmentId) => {
+        .then(() => {
             db.promise().query(sql2, [roleTitle, salary, departmentId])
-            .then(() => {
-                console.log(`${roleTitle} is added to the database!`);
-            })
-            .catch(err => console.log(err)
-            )  
+                .then(() => {
+                    console.log(`${roleTitle} is added to the database!`);
+                })
+                .catch(err => console.log(err)
+                )
         })
 };
 
-const addEmployee = ({ fName, lName, roleId, managerId }) => {
-    const sql = "INSERT INTO employees (first_name, last_name, role_id, manager_id ) VALUES (?, ?, ?, ?);";
-    db.promise().query(sql, [fName, lName, roleId, managerId])
-        .then(() => {
-            console.log(`${fName} ${lName} is added to the database!`);
+const addEmployee = ({ fName, lName, role, manager}) => {
+    const sql = "SELECT id FROM roles WHERE title = ?;";
+    const sql2 = "SELECT id FROM employees WHERE CONCAT(first_name, ' ', last_name) = ?;";
+    const sql3 = "INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?);";
+
+    let roleId;
+    let managerId;
+
+    db.promise().query(sql, role)
+        .then(([rows, fields]) => {
+            return roleId = rows[0].id;
         })
-        .catch(err => console.log(err));
+        .then(() => {
+            db.promise().query(sql2, manager)
+                .then(([rows, fields]) => {
+                    return managerId = rows[0].id;
+                })
+        })
+        .then(() => {
+            db.promise().query(sql3, [fName, lName, roleId, managerId])
+                .then(() => {
+                    console.log([fName, lName, roleId, managerId]);
+                    console.log(`${fName} ${lName} is added to the database!`);
+                })
+                .catch(err => console.log(err));
+        })
 };
 
 const updateEmployeeRole = ({ employeeName, roleName }) => {
