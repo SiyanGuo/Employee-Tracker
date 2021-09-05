@@ -2,6 +2,10 @@ const inquirer = require('inquirer');
 
 const { viewEmployees, viewDepartments, viewRoles, addDepartment, addRole, addEmployee, updateEmployeeRole, selectRole, selectManager, selectDepartment } = require('./db/queries');
 
+// const [roles] = await selectRole();
+// const [employees] = await selectManager();
+// const [departments] = await selectDepartment();
+
 const promptUser = () => {
 
     return inquirer.prompt({
@@ -9,13 +13,13 @@ const promptUser = () => {
         name: 'chooseWhatToDo',
         message: 'What would you like to do?',
         choices: [
-            'View all employees',
-            'View all departments',
-            'view all roles',
-            'Add an employee',
-            'Add a department',
-            'Add a role',
-            "Update an employee's role"],
+            'View All Employees',
+            'View All Departments',
+            'view All Roles',
+            'Add Employee',
+            'Add Department',
+            'Add Role',
+            "Update Employee Role"],
         validate: chooseTeamInput => {
             if (chooseTeamInput) return true;
             else {
@@ -135,35 +139,55 @@ const promptAddRole = async () => {
         )
 };
 
+const promptUpdateRole = async () =>{
+    const [roles] = await selectRole();
+    return inquirer
+    .prompt([
+        {
+            type: 'list',
+            name: 'employeeName',
+            message: "Which employee's role do you want to update?",
+            choices: employees.map(employee => employee.name)
+        },
+        {
+            type: 'list',
+            name: 'roleName',
+            message: "What role do you want to update to?",
+            choices: roles.map(role => role.name)
+
+        }
+    ])
+    .then(result => updateEmployeeRole(result))
+};
+
 const followUp = (data) => {
     switch (data.chooseWhatToDo) {
-
-        case 'View all employees':
+        case 'View All Employees':
             viewEmployees();
             break;
 
-        case "View all departments":
+        case "View All Departments":
             viewDepartments();
             break;
 
-        case "view all roles":
+        case "view All Roles":
             viewRoles();
             break;
 
-        case "Add an employee":
+        case "Add Employee":
             promptAddEmployee();
             break;
 
-        case "Add a department":
+        case "Add Department":
             promptAddDepartment();
             break;
 
-        case "Add a role":
+        case "Add Role":
             promptAddRole();
             break;
 
-        case "Update an employee's role":
-            promptUpdate();
+        case "Update Employee Role":
+            promptUpdateRole();
             break;
 
         default:
@@ -172,6 +196,8 @@ const followUp = (data) => {
     };
 };
 
-promptUser()
-    .then(followUp)
+// promptUser()
+//     .then(followUp)
 
+
+addRole({roleTitle: "operation",salary: "1000", department: "Accounting"});

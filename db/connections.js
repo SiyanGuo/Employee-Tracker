@@ -10,5 +10,4 @@ const db = mysql.createConnection(
     console.log('Welcome to Employee Tracker!')
 );
 
-
 module.exports = db;

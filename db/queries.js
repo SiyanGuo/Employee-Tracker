@@ -58,17 +58,26 @@ const addDepartment = (departmentName) => {
         .catch(err => console.log(err));
 };
 
-const addRole = ({roleTitle, salary, departmentId}) => {
-    const sql = "INSERT INTO roles (title, salary, department_id ) VALUES (?, ?, ?);";
+const addRole = ({ roleTitle, salary, department }) => {
+    const sql = "SELECT id FROM departments WHERE name = ?";
+    const sql2 = "INSERT INTO roles (title, salary, department_id ) VALUES (?, ?, ?);";
 
-    db.promise().query(sql, [roleTitle, salary, departmentId])
-        .then(() => {
-            console.log(`${roleTitle} is added to the database!`);
+    let departmentId;
+    db.promise().query(sql, department)
+        .then(([rows, fields]) => {
+            return departmentId = rows[0].id;
         })
-        .catch(err => console.log(err));
+        .then((departmentId) => {
+            db.promise().query(sql2, [roleTitle, salary, departmentId])
+            .then(() => {
+                console.log(`${roleTitle} is added to the database!`);
+            })
+            .catch(err => console.log(err)
+            )  
+        })
 };
 
-const addEmployee = ({fName, lName, roleId, managerId}) => {
+const addEmployee = ({ fName, lName, roleId, managerId }) => {
     const sql = "INSERT INTO employees (first_name, last_name, role_id, manager_id ) VALUES (?, ?, ?, ?);";
     db.promise().query(sql, [fName, lName, roleId, managerId])
         .then(() => {
@@ -77,9 +86,9 @@ const addEmployee = ({fName, lName, roleId, managerId}) => {
         .catch(err => console.log(err));
 };
 
-const updateEmployeeRole = (roleId, id) => {
+const updateEmployeeRole = ({ employeeName, roleName }) => {
     const sql = "UPDATE employees SET role_id = ? WHERE id =?; ";
-    db.promise().query(sql, [roleId, id])
+    db.promise().query(sql, [roleName, employeeName])
         .then(() => {
             console.log(`The role is updated in the database!`);
         })
@@ -90,21 +99,21 @@ const selectRole = () => {
     const sql = "SELECT id, title FROM roles;"
 
     return db.promise().query(sql);
- 
-        // db.promise().query(sql)
-        // .then((rows) => {
-        //     const roles = [];
-        //     rows.forEach(element => roles.push(element.title));
-        //     return roles;
-        // })
+
+    // db.promise().query(sql)
+    // .then((rows) => {
+    //     const roles = [];
+    //     rows.forEach(element => roles.push(element.title));
+    //     return roles;
+    // })
 };
 
-const selectManager = () =>{
+const selectManager = () => {
     const sql = "SELECT id, CONCAT(first_name, ' ', last_name) as name FROM employees;";
     return db.promise().query(sql);
 };
 
-const selectDepartment = () =>{
+const selectDepartment = () => {
     const sql = "SELECT id, name FROM departments;";
     return db.promise().query(sql);
 };
