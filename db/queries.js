@@ -58,17 +58,17 @@ const addDepartment = (departmentName) => {
         .catch(err => console.log(err));
 };
 
-const addRole = (title, salary, departmentId) => {
+const addRole = ({roleTitle, salary, departmentId}) => {
     const sql = "INSERT INTO roles (title, salary, department_id ) VALUES (?, ?, ?);";
 
-    db.promise().query(sql, [title, salary, departmentId])
+    db.promise().query(sql, [roleTitle, salary, departmentId])
         .then(() => {
-            console.log(`${title} is added to the database!`);
+            console.log(`${roleTitle} is added to the database!`);
         })
         .catch(err => console.log(err));
 };
 
-const addEmployee = (fName, lName, roleId, managerId) => {
+const addEmployee = ({fName, lName, roleId, managerId}) => {
     const sql = "INSERT INTO employees (first_name, last_name, role_id, manager_id ) VALUES (?, ?, ?, ?);";
     db.promise().query(sql, [fName, lName, roleId, managerId])
         .then(() => {
@@ -86,19 +86,29 @@ const updateEmployeeRole = (roleId, id) => {
         .catch(err => console.log(err));
 };
 
-const selectRoles = () => {
+const selectRole = () => {
     const sql = "SELECT id, title FROM roles;"
 
-    return db.promise().query(sql)
-    //     .then((rows) => {
-    //         console.log(rows);
-    //         const roles = [];
-    //         rows.forEach(element => roles.push(element.title));
-    //         return roles;
-    //     })
-
+    return db.promise().query(sql);
+ 
+        // db.promise().query(sql)
+        // .then((rows) => {
+        //     const roles = [];
+        //     rows.forEach(element => roles.push(element.title));
+        //     return roles;
+        // })
 };
 
-module.exports = { viewEmployees, viewDepartments, viewRoles, addDepartment, addRole, addEmployee, updateEmployeeRole, selectRoles };
+const selectManager = () =>{
+    const sql = "SELECT id, CONCAT(first_name, ' ', last_name) as name FROM employees;";
+    return db.promise().query(sql);
+};
+
+const selectDepartment = () =>{
+    const sql = "SELECT id, name FROM departments;";
+    return db.promise().query(sql);
+};
+
+module.exports = { viewEmployees, viewDepartments, viewRoles, addDepartment, addRole, addEmployee, updateEmployeeRole, selectRole, selectManager, selectDepartment };
 
 

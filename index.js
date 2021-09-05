@@ -1,6 +1,6 @@
 const inquirer = require('inquirer');
 
-const { viewEmployees, viewDepartments, viewRoles, addDepartment, addRole, addEmployee, updateEmployeeRole, selectRoles } = require('./db/queries');
+const { viewEmployees, viewDepartments, viewRoles, addDepartment, addRole, addEmployee, updateEmployeeRole, selectRole, selectManager, selectDepartment } = require('./db/queries');
 
 const promptUser = () => {
 
@@ -26,43 +26,113 @@ const promptUser = () => {
     })
 }
 
-
 const promptAddEmployee = async () => {
 
-    const [roles] = await selectRoles();
-    console.log(roles);
-    return inquirer.prompt([
-        {
-            type: 'input',
-            name: 'fName',
-            message: "What is the employee's first name? (required)",
-            validate: fNameInput => {
-                if (fNameInput) return true;
-                else {
-                    console.log("Please enter the first name!");
-                    return false;
+    const [roles] = await selectRole();
+    const [employees] = await selectManager();
+    return inquirer
+        .prompt([
+            {
+                type: 'input',
+                name: 'fName',
+                message: "What is the employee's first name? (required)",
+                validate: fNameInput => {
+                    if (fNameInput) return true;
+                    else {
+                        console.log("Please enter the first name!");
+                        return false;
+                    }
                 }
-            }
-        },
-        {
-            type: 'input',
-            name: 'lName',
-            message: "What is the employee's last name? (required)",
-            validate: lNameInput => {
-                if (lNameInput) return true;
-                else {
-                    console.log("Please enter the last name!");
-                    return false;
+            },
+            {
+                type: 'input',
+                name: 'lName',
+                message: "What is the employee's last name? (required)",
+                validate: lNameInput => {
+                    if (lNameInput) return true;
+                    else {
+                        console.log("Please enter the last name!");
+                        return false;
+                    }
                 }
+            },
+            {
+                type: 'rawlist',
+                name: 'role',
+                message: "What is the employee's role ?",
+                choices: roles.map(role => role.title)
+            },
+            {
+                type: 'rawlist',
+                name: 'manager',
+                message: "Who is the employee's Manager ?",
+                choices: employees.map(employee => employee.name)
             }
-        },
-        {
-            type: 'list',
-            name: 'role',
-            message: "What is the employee's role ? (required)",
-            choices: roles.map(role => role.title)
-        },
-    ]);
+        ])
+        .then(result => addEmployee(result));
+};
+
+
+const promptAddDepartment = () => {
+    return inquirer
+        .prompt(
+            {
+                type: 'input',
+                name: 'departmentName',
+                message: "What is the department's name? (required)",
+                validate: departmentName => {
+                    if (departmentName) return true;
+                    else {
+                        console.log("Please enter the department's name!");
+                        return false;
+                    }
+                }
+            },
+        )
+        .then(result =>
+            addDepartment(result.departmentName)
+        )
+};
+
+
+const promptAddRole = async () => {
+    const [departments] = await selectDepartment();
+    return inquirer
+        .prompt([
+            {
+                type: 'input',
+                name: 'roleTitle',
+                message: "What is the role's title? (required)",
+                validate: roleTitle => {
+                    if (roleTitle) return true;
+                    else {
+                        console.log("Please enter the role's title!");
+                        return false;
+                    }
+                }
+            },
+            {
+                type: 'input',
+                name: 'salary',
+                message: "What is the role's salary? (required)",
+                validate: salary => {
+                    if (salary) return true;
+                    else {
+                        console.log("Please enter the role's salary!");
+                        return false;
+                    }
+                }
+            },
+            {
+                type: 'rawlist',
+                name: 'department',
+                message: "What is the role's department?",
+                choices: departments.map(department => department.name)
+            }
+        ])
+        .then(result =>
+            addRoles(result)
+        )
 };
 
 const followUp = (data) => {
@@ -105,6 +175,3 @@ const followUp = (data) => {
 promptUser()
     .then(followUp)
 
-
-    // const [roles] =  selectRoles();
-    // console.log( roles.map(role => role.title));
