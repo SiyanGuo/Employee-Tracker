@@ -10,7 +10,7 @@ const viewEmployees = () => {
     LEFT JOIN departments ON roles.department_id = departments.id
     LEFT JOIN employees s2 ON s1.manager_id= s2.id;`;
     // asynchronous queries
-    db.promise().query(sql)
+     return db.promise().query(sql)
         .then(([rows, fields]) => {
             const table = cTable.getTable(rows);
             console.log(table);
@@ -30,8 +30,9 @@ const viewEmployees = () => {
 };
 
 const viewDepartments = () => {
-    const sql = "SELECT * FROM departments ORDER BY id;"
-    db.promise().query(sql)
+    // const sql = "SELECT * FROM departments ORDER BY id;"
+    const sql = "SELECT * FROM departments;"
+    return db.promise().query(sql)
         .then(([rows, fields]) => {
             const table = cTable.getTable(rows);
             console.log(table);
@@ -41,7 +42,7 @@ const viewDepartments = () => {
 
 const viewRoles = () => {
     const sql = "SELECT roles.id, roles.title, roles.salary, departments.name AS department FROM roles LEFT JOIN departments ON roles.department_id = departments.id;"
-    db.promise().query(sql)
+    return db.promise().query(sql)
         .then(([rows, fields]) => {
             const table = cTable.getTable(rows);
             console.log(table);
@@ -51,7 +52,7 @@ const viewRoles = () => {
 
 const addDepartment = (departmentName) => {
     const sql = "INSERT INTO departments (name) VALUES (?);";
-    db.promise().query(sql, departmentName)
+    return db.promise().query(sql, departmentName)
         .then(() => {
             console.log(`${departmentName} department is added to the database!`);
         })
@@ -63,7 +64,7 @@ const addRole = ({ roleTitle, salary, department }) => {
     const sql2 = "INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?);";
 
     let departmentId;
-    db.promise().query(sql, department)
+    return db.promise().query(sql, department)
         .then(([rows, fields]) => {
             return departmentId = rows[0].id;
         })
@@ -85,7 +86,7 @@ const addEmployee = ({ fName, lName, role, manager }) => {
     let roleId;
     let managerId;
 
-    db.promise().query(sql, role)
+    return db.promise().query(sql, role)
         .then(([rows, fields]) => {
             return roleId = rows[0].id;
         })
@@ -109,7 +110,7 @@ const updateEmployeeRole = ({ roleName, employeeName }) => {
     const sql = "SELECT id FROM roles WHERE title = ?;"
     const sql2 = "UPDATE employees SET role_id = ? WHERE CONCAT(first_name, ' ', last_name) =?; ";
     let roleId;
-    db.promise().query(sql, roleName)
+    return db.promise().query(sql, roleName)
         .then(([rows, fields]) => {
             return roleId = rows[0].id;
         })

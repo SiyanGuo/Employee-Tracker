@@ -28,7 +28,6 @@ const promptUser = () => {
             }
         }
     });
-
 }
 
 const promptAddEmployee = async () => {
@@ -77,7 +76,6 @@ const promptAddEmployee = async () => {
         .then(result => addEmployee(result));
 };
 
-
 const promptAddDepartment = () => {
     return inquirer
         .prompt(
@@ -98,7 +96,6 @@ const promptAddDepartment = () => {
             addDepartment(result.departmentName)
         )
 };
-
 
 const promptAddRole = async () => {
     const [departments] = await selectDepartment();
@@ -163,40 +160,41 @@ const promptUpdateRole = async () =>{
     .then(result => updateEmployeeRole(result))
 };
 
-const followUp = (data) => {
+const followUp =  async (data) => {
     switch (data.chooseWhatToDo) {
         case 'View All Employees':
-            viewEmployees();
+            await viewEmployees();
             break;
 
         case "View All Departments":
-            viewDepartments();
+            await viewDepartments();
             break;
 
         case "view All Roles":
-            viewRoles();
+            await viewRoles();
             break;
 
         case "Add Employee":
-            promptAddEmployee();
+            await promptAddEmployee();
             break;
 
         case "Add Department":
-            promptAddDepartment();
+            await promptAddDepartment();
             break;
 
         case "Add Role":
-            promptAddRole();
+            await promptAddRole();
             break;
 
         case "Update Employee Role":
-            promptUpdateRole();
+            await promptUpdateRole();
             break;
 
         default:
             console.log(data.chooseWhatToDo);
             break;
     };
+    promptUser().then(followUp);
 };
 
 promptUser()
@@ -205,5 +203,4 @@ promptUser()
 
 // addRole({roleTitle: "Buyer",salary: "20000", department: "Marketing"});
 // addEmployee({fName: "Jo", lName:"yo", role:"Lead Engineer", manager: "Kevin Misef" })
-
 // updateEmployeeRole({roleName: "Accountant", employeeName: "Jason Doe"})
