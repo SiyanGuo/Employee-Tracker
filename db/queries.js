@@ -80,21 +80,16 @@ const addEmployee = ({ fName, lName, role, manager }) => {
         .then(() => {
             return db.promise().query(sql2, manager)
                 .then(([rows, fields]) => {
-                    console.log("rows", rows);
                     managerId = rows[0].id;
-                    console.log("managerId1", managerId);
                 })
         })
         .then(() => {
-            console.log("managerId2", managerId);
             return db.promise().query(sql3, [fName, lName, roleId, managerId])
                 .then(() => {
-                    console.log([fName, lName, roleId, managerId]);
                     console.log(`${fName} ${lName} is added to the database!`);
                 })
                 .catch(err => console.log(err));
         });
-  
 };
 
 const updateEmployeeRole = ({ roleName, employeeName }) => {
@@ -115,26 +110,21 @@ const updateEmployeeRole = ({ roleName, employeeName }) => {
 };
 
 const selectRole = () => {
-    const sql = "SELECT id, title FROM roles;"
-
-    return db.promise().query(sql);
-
-    db.promise().query(sql)
-        .then((rows) => {
-            const roles = [];
-            rows.forEach(element => roles.push(element.title));
-            return roles;
-        })
+    const sql = "SELECT title FROM roles;"
+    return db.promise().query(sql)
+        .then((rows, fields) => { return rows[0].map(row => row.title) })
 };
 
 const selectManager = () => {
-    const sql = "SELECT id, CONCAT(first_name, ' ', last_name) as name FROM employees;";
-    return db.promise().query(sql);
+    const sql = "SELECT CONCAT(first_name, ' ', last_name) as name FROM employees;";
+    return db.promise().query(sql)
+    .then((rows, fields) => { return rows[0].map(row => row.name) })
 };
 
 const selectDepartment = () => {
-    const sql = "SELECT id, name FROM departments;";
-    return db.promise().query(sql);
+    const sql = "SELECT name FROM departments;";
+    return db.promise().query(sql)
+    .then((rows, fields) => { return rows[0].map(row => row.name)})
 };
 
 module.exports = { viewEmployees, viewDepartments, viewRoles, addDepartment, addRole, addEmployee, updateEmployeeRole, selectRole, selectManager, selectDepartment };

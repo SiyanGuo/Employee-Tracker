@@ -27,8 +27,6 @@ function promptUser() {
 
 const promptAddEmployee = async () => {
 
-    const [roles] = await selectRole();
-    const [employees] = await selectManager();
     return inquirer
         .prompt([
             {
@@ -58,14 +56,14 @@ const promptAddEmployee = async () => {
             {
                 type: 'rawlist',
                 name: 'role',
-                message: "What is the employee's role ?",
-                choices: roles.map(role => role.title)
+                message: "What is the employee's role?",
+                choices: await selectRole()
             },
             {
                 type: 'rawlist',
                 name: 'manager',
-                message: "Who is the employee's Manager ?",
-                choices: employees.map(employee => employee.name)
+                message: "Who is the employee's Manager?",
+                choices: await selectManager()
             }
         ])
         .then(result => addEmployee(result));
@@ -93,7 +91,6 @@ const promptAddDepartment = () => {
 };
 
 const promptAddRole = async () => {
-    const [departments] = await selectDepartment();
     return inquirer
         .prompt([
             {
@@ -124,7 +121,7 @@ const promptAddRole = async () => {
                 type: 'rawlist',
                 name: 'department',
                 message: "What is the role's department?",
-                choices: departments.map(department => department.name)
+                choices: await selectDepartment()
             }
         ])
         .then(result =>
@@ -133,8 +130,6 @@ const promptAddRole = async () => {
 };
 
 const promptUpdateRole = async () => {
-    const [roles] = await selectRole();
-    const [employees] = await selectManager();
 
     return inquirer
         .prompt([
@@ -142,13 +137,13 @@ const promptUpdateRole = async () => {
                 type: 'list',
                 name: 'employeeName',
                 message: "Which employee's role do you want to update?",
-                choices: employees.map(employee => employee.name)
+                choices: await selectManager()
             },
             {
                 type: 'list',
                 name: 'roleName',
                 message: "What role do you want to update to?",
-                choices: roles.map(role => role.title)
+                choices: await selectRole()
 
             }
         ])
