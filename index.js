@@ -1,12 +1,7 @@
 const inquirer = require('inquirer');
-
 const { viewEmployees, viewDepartments, viewRoles, addDepartment, addRole, addEmployee, updateEmployeeRole, selectRole, selectManager, selectDepartment } = require('./db/queries');
 
-// const [roles] = await selectRole();
-// const [employees] = await selectManager();
-// const [departments] = await selectDepartment();
-
-const promptUser = () => {
+function promptUser() {
 
     return inquirer.prompt({
         type: 'list',
@@ -137,31 +132,32 @@ const promptAddRole = async () => {
         )
 };
 
-const promptUpdateRole = async () =>{
+const promptUpdateRole = async () => {
     const [roles] = await selectRole();
     const [employees] = await selectManager();
 
     return inquirer
-    .prompt([
-        {
-            type: 'list',
-            name: 'employeeName',
-            message: "Which employee's role do you want to update?",
-            choices: employees.map(employee => employee.name)
-        },
-        {
-            type: 'list',
-            name: 'roleName',
-            message: "What role do you want to update to?",
-            choices: roles.map(role => role.title)
+        .prompt([
+            {
+                type: 'list',
+                name: 'employeeName',
+                message: "Which employee's role do you want to update?",
+                choices: employees.map(employee => employee.name)
+            },
+            {
+                type: 'list',
+                name: 'roleName',
+                message: "What role do you want to update to?",
+                choices: roles.map(role => role.title)
 
-        }
-    ])
-    .then(result => updateEmployeeRole(result))
+            }
+        ])
+        .then(result => updateEmployeeRole(result))
 };
 
-const followUp =  async (data) => {
+const followUp = async (data) => {
     switch (data.chooseWhatToDo) {
+
         case 'View All Employees':
             await viewEmployees();
             break;
@@ -195,12 +191,9 @@ const followUp =  async (data) => {
             break;
     };
     promptUser().then(followUp);
+
 };
 
 promptUser()
-    .then(followUp)
+    .then(followUp);
 
-
-// addRole({roleTitle: "Buyer",salary: "20000", department: "Marketing"});
-// addEmployee({fName: "Jo", lName:"yo", role:"Lead Engineer", manager: "Kevin Misef" })
-// updateEmployeeRole({roleName: "Accountant", employeeName: "Jason Doe"})

@@ -1,7 +1,6 @@
 const cTable = require('console.table');
 const db = require('./connections');
-// const inquirer = require('inquirer');
-// const promptUser = require('../index.js');
+const inquirer = require('inquirer');
 
 const viewEmployees = () => {
     const sql = `SELECT s1.id, s1.first_name, s1.last_name, roles.title AS title, departments.name AS department, roles.salary AS salary, CONCAT(s2.first_name, " ", s2.last_name) AS manager
@@ -9,29 +8,16 @@ const viewEmployees = () => {
     LEFT JOIN roles ON s1.role_id = roles.id
     LEFT JOIN departments ON roles.department_id = departments.id
     LEFT JOIN employees s2 ON s1.manager_id= s2.id;`;
-    // asynchronous queries
-     return db.promise().query(sql)
+    return db.promise().query(sql)
         .then(([rows, fields]) => {
             const table = cTable.getTable(rows);
             console.log(table);
-            // promptUser();
         })
         .catch(err => console.log(err));
-
-    // old call back function
-    // db.query(sql, (err, rows) =>{
-    //     if (err) {
-    //         console.log(err.message);
-    //         return;
-    //     };
-    //     const table = cTable.getTable(rows);
-    //     console.log(table);
-    // })
 };
 
 const viewDepartments = () => {
-    // const sql = "SELECT * FROM departments ORDER BY id;"
-    const sql = "SELECT * FROM departments;"
+    const sql = "SELECT * FROM departments ORDER BY id;"
     return db.promise().query(sql)
         .then(([rows, fields]) => {
             const table = cTable.getTable(rows);
@@ -66,7 +52,7 @@ const addRole = ({ roleTitle, salary, department }) => {
     let departmentId;
     return db.promise().query(sql, department)
         .then(([rows, fields]) => {
-            return departmentId = rows[0].id;
+            departmentId = rows[0].id;
         })
         .then(() => {
             db.promise().query(sql2, [roleTitle, salary, departmentId])
@@ -86,24 +72,29 @@ const addEmployee = ({ fName, lName, role, manager }) => {
     let roleId;
     let managerId;
 
+    //async function
     return db.promise().query(sql, role)
         .then(([rows, fields]) => {
-            return roleId = rows[0].id;
+            roleId = rows[0].id;
         })
         .then(() => {
-            db.promise().query(sql2, manager)
+            return db.promise().query(sql2, manager)
                 .then(([rows, fields]) => {
-                    return managerId = rows[0].id;
+                    console.log("rows", rows);
+                    managerId = rows[0].id;
+                    console.log("managerId1", managerId);
                 })
         })
         .then(() => {
-            db.promise().query(sql3, [fName, lName, roleId, managerId])
+            console.log("managerId2", managerId);
+            return db.promise().query(sql3, [fName, lName, roleId, managerId])
                 .then(() => {
                     console.log([fName, lName, roleId, managerId]);
                     console.log(`${fName} ${lName} is added to the database!`);
                 })
                 .catch(err => console.log(err));
-        })
+        });
+  
 };
 
 const updateEmployeeRole = ({ roleName, employeeName }) => {
@@ -116,10 +107,10 @@ const updateEmployeeRole = ({ roleName, employeeName }) => {
         })
         .then(() => {
             db.promise().query(sql2, [roleId, employeeName])
-            .then(() => {
-                console.log(`${employeeName}'s role is updated in the database!`);
-            })
-            .catch(err => console.log(err));
+                .then(() => {
+                    console.log(`${employeeName}'s role is updated in the database!`);
+                })
+                .catch(err => console.log(err));
         })
 };
 
@@ -128,12 +119,12 @@ const selectRole = () => {
 
     return db.promise().query(sql);
 
-    // db.promise().query(sql)
-    // .then((rows) => {
-    //     const roles = [];
-    //     rows.forEach(element => roles.push(element.title));
-    //     return roles;
-    // })
+    db.promise().query(sql)
+        .then((rows) => {
+            const roles = [];
+            rows.forEach(element => roles.push(element.title));
+            return roles;
+        })
 };
 
 const selectManager = () => {
