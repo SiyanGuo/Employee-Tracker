@@ -14,7 +14,8 @@ function promptUser() {
             'Add Employee',
             'Add Department',
             'Add Role',
-            "Update Employee Role"],
+            "Update Employee Role",
+            "Exit"],
         validate: chooseTeamInput => {
             if (chooseTeamInput) return true;
             else {
@@ -26,7 +27,7 @@ function promptUser() {
 }
 
 const promptAddEmployee = async () => {
-
+    //gather fName, lName, title, name of department
     return inquirer
         .prompt([
             {
@@ -57,19 +58,23 @@ const promptAddEmployee = async () => {
                 type: 'rawlist',
                 name: 'role',
                 message: "What is the employee's role?",
+                //return an array of roles
                 choices: await selectRole()
             },
             {
                 type: 'rawlist',
                 name: 'manager',
                 message: "Who is the employee's Manager?",
+                //return an array of employees
                 choices: await selectManager()
             }
         ])
+        //gather all information and pass it into sql query
         .then(result => addEmployee(result));
 };
 
 const promptAddDepartment = () => {
+    //gather the department's name and pass it in to sql query
     return inquirer
         .prompt(
             {
@@ -91,6 +96,7 @@ const promptAddDepartment = () => {
 };
 
 const promptAddRole = async () => {
+    //gather title, salary and department name of the role
     return inquirer
         .prompt([
             {
@@ -121,38 +127,44 @@ const promptAddRole = async () => {
                 type: 'rawlist',
                 name: 'department',
                 message: "What is the role's department?",
+                //return an array of departments
                 choices: await selectDepartment()
             }
         ])
+        //pass all info into a sql query
         .then(result =>
             addRole(result)
         )
 };
 
 const promptUpdateRole = async () => {
-
+    //gather the employee name and role title
     return inquirer
         .prompt([
             {
                 type: 'list',
                 name: 'employeeName',
                 message: "Which employee's role do you want to update?",
+                //return an array of employees
                 choices: await selectManager()
             },
             {
                 type: 'list',
                 name: 'roleName',
                 message: "What role do you want to update to?",
+                //return an array of roles
                 choices: await selectRole()
 
             }
         ])
+        //pass all info into a sql query
         .then(result => updateEmployeeRole(result))
 };
 
+//follow up questions based on selection
 const followUp = async (data) => {
     switch (data.chooseWhatToDo) {
-
+        //wait till the function return a result
         case 'View All Employees':
             await viewEmployees();
             break;
@@ -181,14 +193,21 @@ const followUp = async (data) => {
             await promptUpdateRole();
             break;
 
+        case "Exit":
+            console.log("Press control + C to exit the application.");
+            break;
+
         default:
             console.log(data.chooseWhatToDo);
             break;
     };
-    promptUser().then(followUp);
-
+    //repeat the first prompt and follow up again if exit is not selected
+    if (data.chooseWhatToDo !== "Exit") {
+        promptUser().then(followUp);
+    } 
 };
 
+//start the app and prompt the first question
 promptUser()
     .then(followUp);
 
